@@ -1,0 +1,245 @@
+"use client"
+
+import React, { useEffect, useState, useActionState } from "react"
+import { PencilSquare as Edit, Trash } from "@medusajs/icons"
+import { Button, Heading, Text, clx } from "@medusajs/ui"
+
+import useToggleState from "@lib/hooks/use-toggle-state"
+import CountrySelect from "@modules/checkout/components/country-select"
+import Input from "@modules/common/components/input"
+import Modal from "@modules/common/components/modal"
+import Spinner from "@modules/common/icons/spinner"
+import { SubmitButton } from "@modules/checkout/components/submit-button"
+import { HttpTypes } from "@medusajs/types"
+import {
+  deleteCustomerAddress,
+  updateCustomerAddress,
+} from "@lib/data/customer"
+
+type EditAddressProps = {
+  region: HttpTypes.StoreRegion
+  address: HttpTypes.StoreCustomerAddress
+  isActive?: boolean
+}
+
+const EditAddress: React.FC<EditAddressProps> = ({
+  region,
+  address,
+  isActive = false,
+}) => {
+  const [removing, setRemoving] = useState(false)
+  const [successState, setSuccessState] = useState(false)
+  const { state, open, close: closeModal } = useToggleState(false)
+
+  const [formState, formAction] = useActionState(updateCustomerAddress, {
+    success: false,
+    error: null,
+    addressId: address.id,
+  })
+
+  const close = () => {
+    setSuccessState(false)
+    closeModal()
+  }
+
+  useEffect(() => {
+    if (successState) {
+      close()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [successState])
+
+  useEffect(() => {
+    if (formState.success) {
+      setSuccessState(true)
+    }
+  }, [formState])
+
+  const removeAddress = async () => {
+    setRemoving(true)
+    await deleteCustomerAddress(address.id)
+    setRemoving(false)
+  }
+
+  return (
+    <>
+      <div
+        className={clx(
+          "bg-white border-2 rounded-3xl p-6 min-h-[220px] h-full w-full flex flex-col justify-between transition-all group hover:shadow-md",
+          {
+            "border-[#003d29] shadow-md shadow-green-900/5": isActive,
+            "border-gray-50": !isActive,
+          }
+        )}
+        data-testid="address-container"
+      >
+        <div className="flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold text-gray-900" data-testid="address-name">
+              {address.first_name} {address.last_name}
+            </h3>
+            {isActive && (
+              <span className="bg-green-50 text-[#003d29] text-[10px] font-extrabold uppercase px-2 py-1 rounded-lg ring-1 ring-green-600/10">
+                Varsayılan
+              </span>
+            )}
+          </div>
+
+          <div className="space-y-1">
+            {address.company && (
+              <Text className="text-sm font-bold text-gray-500" data-testid="address-company">
+                {address.company}
+              </Text>
+            )}
+            <Text className="flex flex-col text-sm font-medium text-gray-500 leading-relaxed">
+              <span data-testid="address-address">
+                {address.address_1}
+                {address.address_2 && <span>, {address.address_2}</span>}
+              </span>
+              <span data-testid="address-postal-city">
+                {address.postal_code}, {address.city}
+              </span>
+              <span data-testid="address-province-country">
+                {address.province && `${address.province}, `}
+                {address.country_code?.toUpperCase()}
+              </span>
+            </Text>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-x-3 mt-6 pt-4 border-t border-gray-50">
+          <button
+            className="flex-1 flex items-center justify-center gap-x-2 py-2 rounded-xl text-xs font-bold text-[#003d29] bg-green-50 hover:bg-green-100 transition-colors"
+            onClick={open}
+            data-testid="address-edit-button"
+          >
+            <Edit className="w-4 h-4" />
+            Düzenle
+          </button>
+          <button
+            className="flex items-center justify-center p-2 rounded-xl text-red-500 hover:bg-red-50 transition-colors"
+            onClick={removeAddress}
+            data-testid="address-delete-button"
+          >
+            {removing ? <Spinner className="w-4 h-4" /> : <Trash className="w-4 h-4" />}
+          </button>
+        </div>
+      </div>
+
+      <Modal isOpen={state} close={close} data-testid="edit-address-modal">
+        <Modal.Title>
+          <Heading className="text-2xl font-bold text-gray-900 mb-2">Adresi Düzenle</Heading>
+        </Modal.Title>
+        <form action={formAction}>
+          <input type="hidden" name="addressId" value={address.id} />
+          <Modal.Body>
+            <div className="flex flex-col gap-y-4 pt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Input
+                  label="Ad"
+                  name="first_name"
+                  required
+                  autoComplete="given-name"
+                  defaultValue={address.first_name || undefined}
+                  data-testid="first-name-input"
+                />
+                <Input
+                  label="Soyad"
+                  name="last_name"
+                  required
+                  autoComplete="family-name"
+                  defaultValue={address.last_name || undefined}
+                  data-testid="last-name-input"
+                />
+              </div>
+              <Input
+                label="Şirket"
+                name="company"
+                autoComplete="organization"
+                defaultValue={address.company || undefined}
+                data-testid="company-input"
+              />
+              <Input
+                label="Adres"
+                name="address_1"
+                required
+                autoComplete="address-line1"
+                defaultValue={address.address_1 || undefined}
+                data-testid="address-1-input"
+              />
+              <Input
+                label="Daire, kat, vb."
+                name="address_2"
+                autoComplete="address-line2"
+                defaultValue={address.address_2 || undefined}
+                data-testid="address-2-input"
+              />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Input
+                  label="Posta Kodu"
+                  name="postal_code"
+                  required
+                  autoComplete="postal-code"
+                  defaultValue={address.postal_code || undefined}
+                  data-testid="postal-code-input"
+                />
+                <Input
+                  label="Şehir"
+                  name="city"
+                  required
+                  autoComplete="locality"
+                  defaultValue={address.city || undefined}
+                  data-testid="city-input"
+                />
+              </div>
+              <Input
+                label="Bölge / Eyalet"
+                name="province"
+                autoComplete="address-level1"
+                defaultValue={address.province || undefined}
+                data-testid="state-input"
+              />
+              <CountrySelect
+                name="country_code"
+                region={region}
+                required
+                autoComplete="country"
+                defaultValue={address.country_code || undefined}
+                data-testid="country-select"
+              />
+              <Input
+                label="Telefon"
+                name="phone"
+                type="tel"
+                autoComplete="tel"
+                defaultValue={address.phone || undefined}
+                data-testid="phone-input"
+              />
+            </div>
+            {formState.error && (
+              <div className="mt-4 p-3 bg-red-50 text-red-700 text-xs font-bold rounded-xl border border-red-100">
+                {formState.error}
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <div className="flex items-center gap-x-4 mt-8">
+              <Button
+                type="reset"
+                variant="secondary"
+                onClick={close}
+                className="flex-1 h-12 rounded-full font-bold text-gray-500"
+                data-testid="cancel-button"
+              >
+                İptal
+              </Button>
+              <SubmitButton className="flex-1 h-12 rounded-full bg-[#003d29] hover:bg-[#002a1c] text-white font-bold" data-testid="save-button">Değişiklikleri Kaydet</SubmitButton>
+            </div>
+          </Modal.Footer>
+        </form>
+      </Modal>
+    </>
+  )
+}
+
+export default EditAddress
