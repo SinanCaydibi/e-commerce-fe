@@ -41,7 +41,7 @@ const StoreTemplate = ({
                   Tüm <span className="text-[#003d29]">Ürünler</span>
                 </h1>
                 <p className="text-sm font-medium text-gray-500">
-                  Shopcart kalitesiyle seçilmiş ürün koleksiyonumuzu keşfedin.
+                  Hikari & Co. kalitesiyle seçilmiş ürün koleksiyonumuzu keşfedin.
                 </p>
               </div>
             </div>

@@ -22,7 +22,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
               Merhaba, {customer?.first_name}
             </h1>
             <p className="text-gray-500 font-medium mt-1">
-              Shopcart üyelik sayfasına hoş geldiniz.
+              Hikari & Co. üyelik sayfasına hoş geldiniz.
             </p>
           </div>
           <div className="bg-gray-50 px-4 py-2 rounded-xl border border-gray-100">
@@ -129,7 +129,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-1">Henüz siparişiniz bulunmuyor.</h3>
-                <p className="text-gray-500 font-medium">İlk siparişinizi oluşturun ve Shopcart kalitesini keşfedin.</p>
+                <p className="text-gray-500 font-medium">İlk siparişinizi oluşturun ve Hikari & Co. kalitesini keşfedin.</p>
               </div>
               <LocalizedClientLink href="/store">
                 <button className="mt-4 px-10 py-4 bg-[#003d29] text-white rounded-full font-bold hover:bg-[#002a1c] transition-all shadow-lg shadow-green-900/10">

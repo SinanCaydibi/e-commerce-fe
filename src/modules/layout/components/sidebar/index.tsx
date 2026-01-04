@@ -147,7 +147,7 @@ const Sidebar = ({ product_categories }: SidebarProps) => {
 
                             <div className="flex flex-col gap-y-2">
                                 <span className="text-[9px] font-bold text-gray-300 leading-relaxed uppercase tracking-widest text-center">
-                                    © {new Date().getFullYear()} Shopcart Global. Tüm Hakları Saklıdır.
+                                    © {new Date().getFullYear()} Hikari & Co. Tüm Hakları Saklıdır.
                                 </span>
                             </div>
                         </div>

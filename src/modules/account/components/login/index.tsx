@@ -1,4 +1,5 @@
 import { login } from "@lib/data/customer"
+import Image from "next/image"
 import { LOGIN_VIEW } from "@modules/account/templates/login-template"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import { SubmitButton } from "@modules/checkout/components/submit-button"
@@ -20,12 +21,15 @@ const Login = ({ setCurrentView }: Props) => {
       data-testid="login-page"
     >
       {/* Logo/Icon */}
-      <div className="mb-6 relative">
-        <div className="w-16 h-16 bg-[#003d29] rounded-2xl flex items-center justify-center shadow-xl shadow-green-900/10 transform hover:scale-105 transition-transform duration-300">
-          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-        </div>
+      <div className="mb-8 relative">
+        <Image
+          src="/logo.png"
+          alt="Hikari & Co."
+          width={240}
+          height={80}
+          className="h-20 w-auto object-contain transform hover:scale-105 transition-transform duration-300"
+          priority
+        />
       </div>
 
       <h1 className="text-3xl font-bold text-gray-900 mb-3">

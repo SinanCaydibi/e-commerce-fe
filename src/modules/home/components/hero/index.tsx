@@ -13,7 +13,7 @@ const Hero = () => {
       <div className="relative z-10 content-container mx-auto h-full flex flex-col justify-center px-6">
         <div className="max-w-2xl sm:pl-10">
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-[#003d29] leading-tight mb-4 md:mb-6">
-            Alışverişin Yeni <br /> Adresi Shopcart.
+            Alışverişin Yeni <br /> Adresi Hikari & Co.
           </h1>
           <p className="text-base md:text-lg text-gray-700 mb-6 md:mb-8 max-w-lg leading-relaxed">
             Stilinizi yansıtan en yeni ürünler, en uygun fiyatlarla şimdi burada. Alışverişe başlamak için keşfetmeye başlayın.

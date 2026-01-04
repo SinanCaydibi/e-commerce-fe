@@ -1,4 +1,5 @@
 import LoginTemplate from "@modules/account/templates/login-template"
+import Image from "next/image"
 
 export default function LoginPage() {
     return (
@@ -10,9 +11,15 @@ export default function LoginPage() {
                 <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-green-900/40 rounded-full blur-[120px]"></div>
 
                 {/* Logo */}
-                <div className="flex items-center gap-x-2 text-3xl font-bold tracking-tight uppercase z-10 transition-transform hover:scale-105 duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10"><circle cx="8" cy="21" r="1" /><circle cx="19" cy="21" r="1" /><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" /></svg>
-                    <span>Shopcart</span>
+                <div className="z-10 transition-transform hover:scale-105 duration-300">
+                    <Image
+                        src="/logo.png"
+                        alt="Hikari & Co."
+                        width={220}
+                        height={60}
+                        className="h-14 w-auto object-contain brightness-0 invert"
+                        priority
+                    />
                 </div>
 
                 {/* Motto */}
@@ -23,13 +30,13 @@ export default function LoginPage() {
                         Hali.
                     </h1>
                     <p className="text-green-50/70 text-xl leading-relaxed max-w-md">
-                        Modern, sürdürülebilir ve zamansız parçalarla dolu koleksiyonumuzu keşfedin. Shopcart ile ayrıcalığı hissedin.
+                        Modern, sürdürülebilir ve zamansız parçalarla dolu koleksiyonumuzu keşfedin. Hikari & Co. ile ayrıcalığı hissedin.
                     </p>
                 </div>
 
                 {/* Footer */}
                 <div className="text-sm text-green-100/40 z-10 font-medium">
-                    © {new Date().getFullYear()} Shopcart Storefront. Tüm hakları saklıdır.
+                    © {new Date().getFullYear()} Hikari & Co. Tüm hakları saklıdır.
                 </div>
             </div>
 

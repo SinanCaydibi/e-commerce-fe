@@ -1,6 +1,7 @@
 "use client"
 
 import { useActionState } from "react"
+import Image from "next/image"
 import Input from "@modules/common/components/input"
 import { LOGIN_VIEW } from "@modules/account/templates/login-template"
 import ErrorMessage from "@modules/checkout/components/error-message"
@@ -23,19 +24,22 @@ const Register = ({ setCurrentView }: Props) => {
       data-testid="register-page"
     >
       {/* Logo/Icon */}
-      <div className="mb-6 relative">
-        <div className="w-16 h-16 bg-[#003d29] rounded-2xl flex items-center justify-center shadow-xl shadow-green-900/10 transform hover:scale-105 transition-transform duration-300">
-          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-          </svg>
-        </div>
+      <div className="mb-8 relative">
+        <Image
+          src="/logo.png"
+          alt="Hikari & Co."
+          width={240}
+          height={80}
+          className="h-20 w-auto object-contain transform hover:scale-105 transition-transform duration-300"
+          priority
+        />
       </div>
 
       <h1 className="text-3xl font-bold text-gray-900 mb-3">
         Hesap Oluşturun
       </h1>
       <p className="text-center text-base text-gray-500 mb-6 max-w-sm">
-        Shopcart dünyasına katılarak avantajlı alışverişin keyfini çıkarın.
+        Hikari & Co. dünyasına katılarak avantajlı alışverişin keyfini çıkarın.
       </p>
 
       <form className="w-full space-y-4" action={formAction}>

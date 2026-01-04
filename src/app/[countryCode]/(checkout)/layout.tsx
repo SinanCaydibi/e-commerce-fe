@@ -1,4 +1,5 @@
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import Image from "next/image"
 import ChevronDown from "@modules/common/icons/chevron-down"
 import MedusaCTA from "@modules/layout/components/medusa-cta"
 
@@ -29,11 +30,17 @@ export default function CheckoutLayout({
 
           <LocalizedClientLink
             href="/"
-            className="flex items-center gap-x-2 text-2xl font-extrabold tracking-tight text-[#003d29] uppercase"
+            className="flex items-center gap-x-2"
             data-testid="store-link"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8"><circle cx="8" cy="21" r="1" /><circle cx="19" cy="21" r="1" /><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" /></svg>
-            <span className="hidden small:block">Shopcart</span>
+            <Image
+              src="/logo.png"
+              alt="Hikari & Co."
+              width={160}
+              height={45}
+              className="h-10 w-auto object-contain"
+              priority
+            />
           </LocalizedClientLink>
 
           <div className="flex-1 basis-0 flex justify-end">
