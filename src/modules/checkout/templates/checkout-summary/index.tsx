@@ -1,13 +1,8 @@
 import { Heading, Text } from "@medusajs/ui"
 import DiscountCode from "@modules/checkout/components/discount-code"
 import CartTotals from "@modules/common/components/cart-totals"
-import PaymentWrapper from "@modules/checkout/components/payment-wrapper"
-import { listCartPaymentMethods } from "@lib/data/payment"
-import Payment from "@modules/checkout/components/payment"
 
 const CheckoutSummary = async ({ cart }: { cart: any }) => {
-  const paymentMethods = await listCartPaymentMethods(cart.region?.id ?? "")
-
   return (
     <div className="flex flex-col gap-y-12">
       {/* Sipariş Özeti Kutusu */}
@@ -21,11 +16,6 @@ const CheckoutSummary = async ({ cart }: { cart: any }) => {
         <div className="h-px bg-gray-100 w-full mb-8" />
 
         <CartTotals totals={cart} />
-
-        <div className="mt-12">
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">Ödeme Bilgileri</h2>
-          <Payment cart={cart} availablePaymentMethods={paymentMethods || []} />
-        </div>
       </div>
     </div>
   )

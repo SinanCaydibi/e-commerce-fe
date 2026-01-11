@@ -1,7 +1,7 @@
 "use client"
 
 import { RadioGroup } from "@headlessui/react"
-import { isStripeLike, paymentInfoMap } from "@lib/constants"
+import { isStripeLike, isIyzico, paymentInfoMap } from "@lib/constants"
 import { initiatePaymentSession } from "@lib/data/cart"
 import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
 import { Button, Container, Heading, Text, clx } from "@medusajs/ui"
@@ -21,6 +21,7 @@ const Payment = ({
   cart: any
   availablePaymentMethods: any[]
 }) => {
+
   const activeSession = cart.payment_collection?.payment_sessions?.find(
     (paymentSession: any) => paymentSession.status === "pending"
   )
@@ -80,10 +81,52 @@ const Payment = ({
       const checkActiveSession =
         activeSession?.provider_id === selectedPaymentMethod
 
+      let paymentSession = activeSession
+
+      // İyzico için özel işlem
+      if (isIyzico(selectedPaymentMethod)) {
+        if (!checkActiveSession) {
+          // Session henüz oluşturulmamış, oluştur ve URL'i al
+          const response = await initiatePaymentSession(cart, {
+            provider_id: selectedPaymentMethod,
+          })
+
+          // Response içinden paymentPageUrl'i çıkar
+          const paymentPageUrl = response?.payment_collection?.payment_sessions?.find(
+            (ps: any) => ps.provider_id === selectedPaymentMethod
+          )?.data?.paymentPageUrl
+
+          if (paymentPageUrl) {
+            // İyzico ödeme sayfasına yönlendir
+            window.location.href = paymentPageUrl
+            return
+          } else {
+            setError("İyzico ödeme sayfası URL'si alınamadı")
+            setIsLoading(false)
+            return
+          }
+        } else {
+          // Session zaten mevcut, direkt yönlendir
+          if (paymentSession?.data?.paymentPageUrl) {
+            window.location.href = paymentSession.data.paymentPageUrl
+            return
+          } else {
+            setError("İyzico ödeme sayfası URL'si alınamadı")
+            setIsLoading(false)
+            return
+          }
+        }
+      }
+
+      // Stripe-like providerlar için
       if (!checkActiveSession) {
         await initiatePaymentSession(cart, {
           provider_id: selectedPaymentMethod,
         })
+
+        // Session başlatıldıktan sonra sayfayı yenile - cart güncellenecek
+        window.location.reload()
+        return
       }
 
       if (!shouldInputCard) {
@@ -106,10 +149,12 @@ const Payment = ({
   }, [isOpen])
 
   return (
-    <div className="bg-white">
+    <div className={clx("bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm")}>
+      <div className="flex flex-col mb-8">
+        <Text className="text-xl md:text-2xl font-bold text-gray-900">Ödeme Bilgileri</Text>
+      </div>
       <div>
-        <div className={isOpen ? "block" : "hidden"}>
-          {!paidByGiftcard && availablePaymentMethods?.length && (
+          {!paidByGiftcard && availablePaymentMethods?.length ? (
             <div className="flex flex-col gap-y-4">
               <RadioGroup
                 value={selectedPaymentMethod}
@@ -138,6 +183,16 @@ const Payment = ({
                 ))}
               </RadioGroup>
             </div>
+          ) : (
+            <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-yellow-800 font-medium">
+                ⚠️ Hiçbir ödeme yöntemi bulunamadı
+              </p>
+              <p className="text-sm text-yellow-600 mt-1">
+                paidByGiftcard: {String(paidByGiftcard)} |
+                availablePaymentMethods.length: {availablePaymentMethods?.length || 0}
+              </p>
+            </div>
           )}
 
           {paidByGiftcard && (
@@ -163,13 +218,6 @@ const Payment = ({
 
           {activeSession && (
             <div className="mt-8">
-              <div className="flex items-start gap-x-1 w-full mb-6">
-                <div className="w-full">
-                  <Text className="txt-medium text-gray-500 mb-1 font-medium">
-                    "Siparişi Tamamla" butonuna tıklayarak Kullanım Koşulları, Satış Koşulları ve İade Politikamızı okuduğunuzu, anladığınızı ve kabul ettiğinizi beyan etmiş olursunuz.
-                  </Text>
-                </div>
-              </div>
               <PaymentButton cart={cart} data-testid="submit-order-button" />
             </div>
           )}
@@ -186,68 +234,18 @@ const Payment = ({
               Kart bilgilerini doğrulayın
             </Button>
           )}
-        </div>
 
-        <div className={isOpen ? "hidden" : "block"}>
-          {cart && paymentReady && activeSession ? (
-            <div className="flex flex-col gap-y-4 p-6 bg-gray-50 rounded-2xl border border-gray-100">
-              <div className="flex justify-between items-center">
-                <div className="flex flex-col">
-                  <Text className="text-gray-500 font-bold text-xs uppercase tracking-wider mb-1">
-                    ÖDEME YÖNTEMİ
-                  </Text>
-                  <Text
-                    className="text-gray-900 font-bold"
-                    data-testid="payment-method-summary"
-                  >
-                    {paymentInfoMap[activeSession?.provider_id]?.title ||
-                      activeSession?.provider_id}
-                  </Text>
-                </div>
-                <button onClick={handleEdit} className="text-[#003d29] font-bold text-sm hover:underline">Düzenle</button>
-              </div>
-              <div className="flex flex-col border-t border-gray-200 pt-4">
-                <Text className="text-gray-500 font-bold text-xs uppercase tracking-wider mb-2">
-                  ÖDEME DETAYLARI
-                </Text>
-                <div
-                  className="flex gap-2 text-gray-900 font-bold items-center"
-                  data-testid="payment-details-summary"
-                >
-                  <div className="flex items-center h-8 w-fit bg-white border border-gray-200 rounded px-2">
-                    {paymentInfoMap[selectedPaymentMethod]?.icon || (
-                      <CreditCard className="w-5 h-5" />
-                    )}
-                  </div>
-                  <Text>
-                    {isStripeLike(selectedPaymentMethod) && cardBrand
-                      ? cardBrand
-                      : "Sıradaki adımda kart bilgilerini gireceksiniz"}
-                  </Text>
-                </div>
-              </div>
-            </div>
-          ) : paidByGiftcard ? (
-            <div className="flex flex-col p-4 bg-gray-50 rounded-2xl">
-              <Text className="text-gray-500 font-bold text-xs uppercase tracking-wider mb-1">
-                ÖDEME YÖNTEMİ
-              </Text>
-              <Text
-                className="text-gray-900 font-bold"
-                data-testid="payment-method-summary"
-              >
-                Hediye Kartı
-              </Text>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-y-2 opacity-50 grayscale pointer-events-none">
-              <div className="w-full h-14 border border-gray-200 rounded-2xl flex items-center px-6 gap-x-4">
-                <div className="w-5 h-5 rounded-full border-2 border-gray-300" />
-                <div className="w-32 h-4 bg-gray-100 rounded" />
-              </div>
-            </div>
+          {selectedPaymentMethod && isIyzico(selectedPaymentMethod) && (
+            <Button
+              size="large"
+              className="w-full mt-8 bg-[#003d29] hover:bg-[#002a1c] text-white h-14 rounded-full text-lg font-bold"
+              onClick={handleSubmit}
+              isLoading={isLoading}
+              data-testid="submit-iyzico-button"
+            >
+              İyzico ile Ödemeye Geç
+            </Button>
           )}
-        </div>
       </div>
     </div>
   )

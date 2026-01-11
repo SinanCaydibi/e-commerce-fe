@@ -148,20 +148,17 @@ const Shipping: React.FC<ShippingProps> = ({
     setError(null)
   }, [isOpen])
 
+  // Eğer shipping method yoksa component'i gösterme
+  if (!_shippingMethods?.length && !hasPickupOptions) {
+    return null
+  }
+
   return (
-    <div className={clx("bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm", {
-      "hidden": !isOpen && cart.shipping_methods?.length === 0
-    })}>
-      {isOpen ? (
-        <>
-          <div className="grid">
-            <div className="flex flex-col mb-8">
-              <span className="text-gray-600 font-medium">
-                Siparişinizin size nasıl ulaştırılmasını istersiniz?
-              </span>
-            </div>
-            <div data-testid="delivery-options-container">
-              <div className="pb-8">
+    <div className={clx("bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm")}>
+      <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-8">Kargo Yöntemleri</h2>
+      <div className="grid">
+        <div data-testid="delivery-options-container">
+          <div className="pb-8">
                 {hasPickupOptions && (
                   <RadioGroup
                     value={showPickupOptions}
@@ -272,8 +269,6 @@ const Shipping: React.FC<ShippingProps> = ({
                     )
                   })}
                 </RadioGroup>
-              </div>
-            </div>
           </div>
 
           <div>
@@ -281,42 +276,9 @@ const Shipping: React.FC<ShippingProps> = ({
               error={error}
               data-testid="delivery-option-error-message"
             />
-            <Button
-              size="large"
-              className="w-full mt-6 bg-[#003d29] hover:bg-[#002a1c] text-white h-14 rounded-full text-lg font-bold"
-              onClick={handleSubmit}
-              isLoading={isLoading}
-              disabled={!cart.shipping_methods?.[0]}
-              data-testid="submit-delivery-option-button"
-            >
-              Ödemeye Devam Et
-            </Button>
-          </div>
-        </>
-      ) : (
-        <div>
-          <div className="text-small-regular">
-            {cart && (cart.shipping_methods?.length ?? 0) > 0 && (
-              <div className="flex flex-col gap-y-2 p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                <Text className="text-gray-500 font-bold text-xs uppercase tracking-wider">
-                  YÖNTEM
-                </Text>
-                <div className="flex justify-between items-center">
-                  <Text className="text-gray-900 font-bold">
-                    {cart.shipping_methods!.at(-1)!.name}
-                  </Text>
-                  <Text className="text-gray-900 font-bold">
-                    {convertToLocale({
-                      amount: cart.shipping_methods!.at(-1)!.amount!,
-                      currency_code: cart?.currency_code,
-                    })}
-                  </Text>
-                </div>
-              </div>
-            )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }

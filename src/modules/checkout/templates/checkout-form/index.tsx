@@ -68,6 +68,9 @@ export default async function CheckoutForm({
 
       {/* 3. Kargo Yöntemleri */}
       <Shipping cart={cart} availableShippingMethods={shippingMethods} />
+
+      {/* 4. Ödeme Bilgileri */}
+      <Payment cart={cart} availablePaymentMethods={paymentMethods} />
     </div>
   )
 }

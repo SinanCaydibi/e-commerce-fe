@@ -1,6 +1,6 @@
 "use client"
 
-import { isManual, isStripeLike } from "@lib/constants"
+import { isManual, isStripeLike, isIyzico } from "@lib/constants"
 import { placeOrder } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@medusajs/ui"
@@ -39,8 +39,10 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
       return (
         <ManualTestPaymentButton notReady={notReady} data-testid={dataTestId} />
       )
+    case isIyzico(paymentSession?.provider_id):
+      return null // İyzico kendi butonunu kullanıyor
     default:
-      return <Button disabled>Ödeme yöntemi seçin</Button>
+      return null
   }
 }
 

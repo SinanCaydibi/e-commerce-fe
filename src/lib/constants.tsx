@@ -34,6 +34,10 @@ export const paymentInfoMap: Record<
     title: "Manual Payment",
     icon: <CreditCard />,
   },
+  pp_iyzico_iyzico: {
+    title: "iyzico ile Öde",
+    icon: <CreditCard className="text-orange-500" />,
+  },
   // Add more payment providers here
 }
 
@@ -51,8 +55,13 @@ export const isManual = (providerId?: string) => {
   return providerId?.startsWith("pp_system_default")
 }
 
+export const isIyzico = (providerId?: string) => {
+  return providerId?.startsWith("pp_iyzico")
+}
+
 // Add currencies that don't need to be divided by 100
 export const noDivisionCurrencies = [
+  "try", // Turkish Lira
   "krw",
   "jpy",
   "vnd",
